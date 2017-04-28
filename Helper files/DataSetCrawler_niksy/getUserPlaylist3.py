@@ -13,7 +13,7 @@ class myThread(threading.Thread):
        # Obtain yours from http://www.last.fm/api/account/create for Last.fm
        self.API_KEY = "1eda1ba7ac590388343743dcebada5ee"  # this is a sample key
        self.API_SECRET = "ce4e1b7a740a8107afa60152eea43b32"
-       self.output_file_location = "~/Desktop/user_playlist_new_"+ str(FileNumber)+".csv"
+       self.output_file_location = "~/Desktop/Out/user_playlist_new_"+ str(FileNumber)+".csv"
        self.file_location = "/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/users_playlist_new_0_1500.csv"
        # defining various list for merging into the final .csv file
        self.usernames = []
@@ -67,7 +67,7 @@ class myThread(threading.Thread):
           except:
              print "Exception"
              self.writeToCSV()
-             self.output_file_location="FinalData_niksy/playlistExcept"+ str(self.FileNumber)+".csv"
+             self.output_file_location="~/Desktop/Out/Error_1_"+ str(self.FileNumber)+".csv"
              continue
           temptags = []
           for temp in tags:
