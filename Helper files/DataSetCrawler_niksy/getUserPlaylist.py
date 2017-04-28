@@ -14,8 +14,8 @@ class myThread(threading.Thread):
        # Obtain yours from http://www.last.fm/api/account/create for Last.fm
        self.API_KEY = "1eda1ba7ac590388343743dcebada5ee"  # this is a sample key
        self.API_SECRET = "ce4e1b7a740a8107afa60152eea43b32"
-       self.output_file_location = "FinalData_niksy2/playlist"+ str(FileNumber)+".csv"
-       self.file_location = "FinalData/users_playlist_new_1500_3000.csv"
+       self.output_file_location = "~/Desktop/user_playlist_new_"+ str(FileNumber)+".csv"
+       self.file_location = "/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/users_playlist_new_0_1500.csv"
        # defining various list for merging into the final .csv file
        self.usernames = []
        self.musictitle = []
@@ -47,12 +47,10 @@ class myThread(threading.Thread):
                                       username=username, password_hash=None)
        return network
 
-
    def writeToCSV(self):
        df2 = pd.DataFrame(
            data={"Songs": self.songscount , "Tags" : self.tagslist, "Listeners": self.listenercount , "Playcount": self.playcount, "Duration" : self.duration,
                  },columns=["Songs","Listeners","Playcount","Duration", "Tags"])
-
        # df = pd.DataFrame(
        #     data={"Users": self.usernames, "Songs": self.musictitle, "Artists": self.artist, "Playtime": self.playingtime, "Album": self.album,
        #
@@ -60,8 +58,6 @@ class myThread(threading.Thread):
        #     columns=["Users", "Songs", "Artists", "Playtime", "Album", "Tags"])
 
        df2.to_csv(self.output_file_location, sep=',')
-
-
    # gettig the user infor and then adding all the individual elements in temporary list in order to be dumped into final list
    def writeUserPlaylist(self):
        network = self.networkdeclaration("rj")
@@ -84,14 +80,8 @@ class myThread(threading.Thread):
           self.songscount.append(self.SongsFrame[i])
        self.writeToCSV()
 threads = []
-for itr in range(280,295):
+for itr in range(0,30):
   threads.append(myThread(itr,itr*1000,(itr+1)*1000))
 print "I am going"
-for itr in range(0,20):
+for itr in range(0,30):
    threads[itr].start()
-    
-
-
-
-
-
