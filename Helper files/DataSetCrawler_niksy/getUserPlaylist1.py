@@ -1,4 +1,3 @@
-@@ -1,97 +0,0 @@
 import pylast
 import pandas as pd
 import random
@@ -68,7 +67,7 @@ class myThread(threading.Thread):
           except:
              print "Exception"
              self.writeToCSV()
-             self.output_file_location="FinalData_niksy/playlistExcept"+ str(self.FileNumber)+".csv"
+             self.output_file_location="~/Desktop/Error_1_"+ str(self.FileNumber)+".csv"
              continue
           temptags = []
           for temp in tags:
