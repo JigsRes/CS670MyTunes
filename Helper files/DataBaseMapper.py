@@ -31,12 +31,13 @@ for folder in metadata_files:
 		###
 		print folder
 		playlist_files = os.listdir(metadata_base_dir + folder)
+		print len(playlist_files)
 		for key in xrange(index*100, len(playlist_files)+index*100):
 			print 'Parsing: Playlist', key 
 			doc = 'playlist'+ str(key) + '.csv'
 			if 'playlist' in doc:
 				#if doc == 'playlist0.csv' or doc == 'playlist293.csv':
-				if doc == 'playlist293.csv':
+				if doc == 'playlist0.csv':
 					continue
 				#print metadata_base_dir + folder + '/' + doc
 				temp_df = pd.read_csv(metadata_base_dir + folder + '/' + doc)
@@ -47,7 +48,6 @@ for folder in metadata_files:
 					temp_df = pd.concat([temp_df, df_empty], axis = 0)
 					if temp_df.shape[0] == 1000:
 						print "################################################################################################################################"
-						print 
 				MetaData_DF = pd.concat([MetaData_DF, temp_df], axis = 0)
 		index += 1
 #User_DF = User_DF.truncate(after = 200, axis = 0)
