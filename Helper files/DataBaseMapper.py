@@ -4,12 +4,14 @@ import os
 count = 0
 user_pl_dir = '/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/'
 user_files = os.listdir(user_pl_dir)
-User_DF = pd.read_csv('/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/users_playlist_new_0_1500.csv')
+#User_DF = pd.read_csv('/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/users_playlist_new_0_1500.csv')
+User_DF = pd.read_csv('/Users/sidverma/Documents/GitHub/CS670MyTunes/Datasets/Lastfm/Users_6000/users_playlist_new_1500_3000.csv')
 count += User_DF.shape[0]
-for doc in user_files[:2]:
-	#print doc
+for doc in user_files[2:3]:
+	print "Parsing User Document: ", doc
 	if 'playlist' in doc:
-		if doc == 'users_playlist_new_0_1500.csv':
+		#if doc == 'users_playlist_new_0_1500.csv':
+		if doc == 'users_playlist_new_1500_3000.csv':
 			continue
 		temp_df = pd.read_csv(user_pl_dir + doc)
 		count += temp_df.shape[0]
