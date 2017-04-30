@@ -15,11 +15,11 @@ def freq():
     tags_list = df['Tags']
     index = 0
     freqDict = {}
-    for k in xrange(999):
+    for k in xrange(1000):
         freqDict[k] = 0
     for i in tags_list:
-        i = i.replace('[','').replace('[','')
-        iList = i.split(', ')
+        iList = i.split('$')
+        print len(iList)
         if index%500 == 0:
             print index
         for j in xrange(len(iList)):

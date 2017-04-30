@@ -70,24 +70,21 @@ class myThread(threading.Thread):
         #     df.to_csv('Final0-2999.csv')
         #     return
         #print "Initial Tag: ", i
-        if i == '[]':
-            tags_list.append(emptyTag)
-            #df.set_value(index, 'Tags', emptyTag)
-            index += 1
-            continue
-        if not isinstance(i, str):
-            tags_list.append(emptyTag)
-            #df.set_value(index, 'Tags', emptyTag)
-            index += 1
-            continue
-        newTag = self.GetNewTag(i)
         if index%1000 == 0:
             print '-------------------'
             print index, ' ', newTag  
             print '-------------------'
-        tags_list.append(newTag)
-        #df.set_value(index, 'Tags', newTag)
-        index += 1
+
+        if i == '[]' or (not isinstance(i, str)):
+            tags_list.append(emptyTag)
+            #df.set_value(index, 'Tags', emptyTag)
+            index += 1
+            continue
+        else:
+            newTag = self.GetNewTag(i)
+            tags_list.append(newTag)
+            #df.set_value(index, 'Tags', newTag)
+            index += 1
 
     df2 = pd.DataFrame(
            data={"Tags": tags_list,
@@ -96,7 +93,7 @@ class myThread(threading.Thread):
     return
 
   def mergCSV(self):
-    base_directory = '/Users/sidverma/Desktop/'
+    base_directory = '/Users/sidverma/Desktop/IR/'
     os.chdir(base_directory)
     tags_list=[]
     df = pd.read_csv('FinalTagCleaner0.csv')
@@ -167,12 +164,13 @@ class myThread(threading.Thread):
     i = 0
     pop_tags = []
     for tup in lists:
+        pop_tags.append(tup[0])
         i += 1
         if i == 1001:# if tup[1] < 1000:
             break
-        pop_tags.append(tup[0])
     pop_tags.pop(0)
     pop_tags.sort()
+    print 'PopTags Len:: ',len(pop_tags)
     for i in pop_tags:
         print i
         print '-------------'
@@ -189,16 +187,25 @@ class myThread(threading.Thread):
         newStripTagVec = []
         iList = i.split('##')
         for tmplateTag in pop_tags:
-            if tmplateTag in iList:
+            if tmplateTag in set(iList):
                 newStripTagVec.append(1)
             else:
                 newStripTagVec.append(0)
-        tags_list_New.append(newStripTagVec)
+        print len(newStripTagVec)
+        newStripTagStr = '$'.join(str(x) for x in newStripTagVec)
+        tags_list_New.append(newStripTagStr)
     print 'done retagging list genrtr'
-    dfNew = pd.DataFrame(
-           data={"Tags": tags_list_New,
-                 },columns=["Tags"])
-    dfNew.to_csv("FinalTagroomMergedVecs.csv")
+    for l in tags_list_New:
+        if len(l) > 1000:
+            print "Error"
+
+    print "OK. Writing now...."
+    my_df = pd.DataFrame()     
+    my_df['Tags'] = tags_list_New
+    # dfNew = pd.DataFrame(
+    #        data={"Tags": pd.Series(tags_list_New),
+    #              },columns=["Tags"])
+    my_df.to_csv("FinalTagroomMergedVecs.csv")
     print 'Done dona don'
 
     #self.getTagFreqDict(self.startime,self.endtime)
