@@ -4,9 +4,21 @@ import os
 from nltk.stem import PorterStemmer
 import operator
 import matplotlib.pyplot as plt
-stemCache = {}
+import threading
+import copy
 
-def doStemming(w):
+stemCache = {}
+class myThread(threading.Thread):
+  def __init__(self,FileNumber,startime,endtime):
+    threading.Thread.__init__(self)
+    self.startime = startime
+    self.endtime = endtime
+    self.FileNumber = FileNumber
+
+  def run(self):
+    self.Retagger()
+  
+  def doStemming(self,w):
     return w
     if w in stemCache:
         return stemCache[w]
@@ -15,7 +27,7 @@ def doStemming(w):
     stemCache[w] = retVal
     return retVal
 
-def GetNewTag(inTag):
+  def GetNewTag(self,inTag):
     i = inTag
     i = i.replace('[', '')
     i = i.replace(']', '')
@@ -28,8 +40,6 @@ def GetNewTag(inTag):
         return emptyTag
 
     i = i.lstrip().rstrip().lower()
-
-    print "Processing: ", i
     iList = i.split()
     newTaglist = []
     for t in set(iList):
@@ -37,63 +47,163 @@ def GetNewTag(inTag):
         tSubList = t.split()
         tSortedList = []
         for w in tSubList:
-            tSortedList.append(doStemming(w))
+            tSortedList.append(self.doStemming(w))
         tSortedList.sort()
         newTag = " ".join(tSortedList)
         newTaglist.append(newTag)
-    return newTaglist
+    return "##".join(newTaglist)
 
-def tagCleaner():
+  def tagCleaner(self,start_time,end_time):
     emptyTag = '$$NOTAG$$'
     base_directory = '/Users/sidverma/Desktop/'
     os.chdir(base_directory)
     #merge two files
-    df = pd.read_csv('Final0-1500.csv')
-    df2 = pd.read_csv('Final1500-3000.csv')
-    df = df.append(df2, axis = 0)
+    df = pd.read_csv('FinalTagroomFile.csv')
     #start reading Tagscols
-    tagsCol = df['Tags']
+    tagsCol = df['tags']
     index = 0
-    for i in tagsCol:
-        '''
-        if index == 20:
-            print "Exitting!"
-            return
-        print "Initial Tag: ", i
-        '''
+    tags_list=[]
+    print "Thread " + str(self.FileNumber) + "started"
+    for i in tagsCol[start_time:end_time]:
+        # if index == 20:
+        #     print "Exitting!"
+        #     df.to_csv('Final0-2999.csv')
+        #     return
+        #print "Initial Tag: ", i
         if i == '[]':
-            df.set_value(index, 'Tags', emptyTag)
+            tags_list.append(emptyTag)
+            #df.set_value(index, 'Tags', emptyTag)
             index += 1
             continue
         if not isinstance(i, str):
-            df.set_value(index, 'Tags', emptyTag)
+            tags_list.append(emptyTag)
+            #df.set_value(index, 'Tags', emptyTag)
             index += 1
             continue
-        newTag = GetNewTag(i)
-        df.set_value(index, 'Tags', newTag)
+        newTag = self.GetNewTag(i)
+        if index%1000 == 0:
+            print '-------------------'
+            print index, ' ', newTag  
+            print '-------------------'
+        tags_list.append(newTag)
+        #df.set_value(index, 'Tags', newTag)
         index += 1
-    df.to_csv('Final0-2999.csv')
+
+    df2 = pd.DataFrame(
+           data={"Tags": tags_list,
+                 },columns=["Tags"])
+    df2.to_csv("FinalTagCleaner" + str(self.FileNumber) + ".csv")
     return
 
-
-def getTagFreqDict():
+  def mergCSV(self):
     base_directory = '/Users/sidverma/Desktop/'
     os.chdir(base_directory)
-    globalTags = []
-    df = pd.read_csv('Final0-2999.csv')
-    tagsCol = df['Tags']
-    index = 0
-    emptyTag = '$$NOTAG$$'
-    for i in tagsCol:
-        iList = i.split()
-        for t in iList:
-            globalTags.append(t)
-    return collections.Counter(globalTagsList)
+    tags_list=[]
+    df = pd.read_csv('FinalTagCleaner0.csv')
+    df1 = pd.read_csv('FinalTagCleaner1.csv')
+    df2 = pd.read_csv('FinalTagCleaner2.csv')
+    df3 = pd.read_csv('FinalTagCleaner3.csv')
+    df4 = pd.read_csv('FinalTagCleaner4.csv')
+    df5 = pd.read_csv('FinalTagCleaner5.csv')
+    tags_list = df['Tags']
+    print len(tags_list)
+    tags_list = tags_list.append(df1['Tags'])
+    print len(tags_list)
+    tags_list = tags_list.append(df2['Tags'])
+    print len(tags_list)
+    tags_list = tags_list.append(df3['Tags'])
+    print len(tags_list)
+    tags_list = tags_list.append(df4['Tags'])
+    print len(tags_list)
+    tags_list = tags_list.append(df5['Tags'])
+    print len(tags_list)
+    dfNew = pd.DataFrame(
+           data={"Tags": tags_list,
+                 },columns=["Tags"])
+    dfNew.to_csv("FinalTagroomMerged.csv")
 
-def Retagger():
-    tagCleaner()
-    freqDict = getTagFreqDict()
-    print len(freqDict)
+    splitList = []
+    for i in tags_list:
+        iList = i.split('##')
+        for tg in iList:
+            splitList.append(tg)
+
+    return collections.Counter(splitList)
+
+  def getTagFreqDict(self):
+    # base_directory = '/Users/sidverma/Desktop/'
+    # os.chdir(base_directory)
+    # globalTags = []
+    # df = pd.read_csv('Final0-2999.csv')
+    # tagsCol = df['Tags']
+    # index = 0
+    # emptyTag = '$$NOTAG$$'
+    # for i in tagsCol:
+    #     iList = i.split()
+    #     for t in iList:
+    #         globalTags.append(t)
+    # return collections.Counter(globalTagsList)
+    
+    df = pd.read_csv('FinalTagroomMerged.csv')
+    #start reading Tagscols
+    tagsCol = df['tags']
+    index = 0
+    tags_list=[]
+    print "Thread " + str(self.FileNumber) + "started"
+    for i in tagsCol[start_time:end_time]:
+        if index%1000 == 0:
+            print '-------------------'
+            print index, ' ', newTag  
+            print '-------------------'
+        iList = i.split('##')
+        for tg in iList:
+            tags_list.append(tg)
+        index += 1
+
+  def Retagger(self):
+    freqDict = self.mergCSV()
+    print 'Done merg@'
+    lists = sorted(freqDict.items(), key=operator.itemgetter(1), reverse = True)
+    i = 0
+    pop_tags = []
+    for tup in lists:
+        i += 1
+        if i == 1001:# if tup[1] < 1000:
+            break
+        pop_tags.append(tup[0])
+    pop_tags.pop(0)
+    pop_tags.sort()
+    for i in pop_tags:
+        print i
+        print '-------------'
+    print 'done'
+    print 'start retaggin'
+    base_directory = '/Users/sidverma/Desktop/'
+    os.chdir(base_directory)
+    tags_list=[]
+    df = pd.read_csv('FinalTagroomMerged.csv')
+    tags_list = df['Tags']
+    tags_list_New = []
+    index = 0
+    for i in tags_list:
+        newStripTagVec = []
+        iList = i.split('##')
+        for tmplateTag in pop_tags:
+            if tmplateTag in iList:
+                newStripTagVec.append(1)
+            else:
+                newStripTagVec.append(0)
+        tags_list_New.append(newStripTagVec)
+    print 'done retagging list genrtr'
+    dfNew = pd.DataFrame(
+           data={"Tags": tags_list_New,
+                 },columns=["Tags"])
+    dfNew.to_csv("FinalTagroomMergedVecs.csv")
+    print 'Done dona don'
+    #self.getTagFreqDict(self.startime,self.endtime)
+    #print 'cleaning Tags done'
+    #freqDict = getTagFreqDict()
+    #print len(freqDict)
     '''
     lists = sorted(freqDict.items(), key=operator.itemgetter(1), reverse = True)
     i = 0
@@ -110,7 +220,15 @@ def Retagger():
     f.close()
     '''
 
-Retagger()
+threads  =[]
+threadscount = [5]
+for itr in threadscount:
+    threads.append(myThread(itr,itr*100000,(itr*100000)+84938))
+print "It has started"
+for itr in range(0,1):
+    threads[itr].start()
+
+
 
 # xTicks, y = zip(*lists) # unpack a list of pairs into two tuples
 # #plt.figure(figsize = (90,30))
