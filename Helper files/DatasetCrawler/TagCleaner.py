@@ -178,7 +178,7 @@ class myThread(threading.Thread):
         print '-------------'
     print 'done'
     print 'start retaggin'
-    base_directory = '/Users/sidverma/Desktop/'
+    base_directory = '/Users/sidverma/Desktop/IR/'
     os.chdir(base_directory)
     tags_list=[]
     df = pd.read_csv('FinalTagroomMerged.csv')
@@ -200,6 +200,7 @@ class myThread(threading.Thread):
                  },columns=["Tags"])
     dfNew.to_csv("FinalTagroomMergedVecs.csv")
     print 'Done dona don'
+
     #self.getTagFreqDict(self.startime,self.endtime)
     #print 'cleaning Tags done'
     #freqDict = getTagFreqDict()

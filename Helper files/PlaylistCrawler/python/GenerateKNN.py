@@ -4,7 +4,7 @@ import math
 import time
 import os
 
-basedir = '/Users/sidverma/Desktop/'
+basedir = '/Users/sidverma/Desktop/IR/'
 os.chdir(basedir)
 
 def similarity_func(playlist1, playlist2):
