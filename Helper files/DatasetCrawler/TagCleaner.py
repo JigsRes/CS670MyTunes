@@ -23,10 +23,12 @@ def GetNewTag(inTag):
     i = i.replace('\'', '')
     i = i.replace(' ', '#')
     i = i.replace(',#', ' ')
+    emptyTag = '$$NOTAG$$'
     if not len(i):
         return emptyTag
 
     i = i.lstrip().rstrip().lower()
+
     print "Processing: ", i
     iList = i.split()
     newTaglist = []
@@ -39,15 +41,26 @@ def GetNewTag(inTag):
         tSortedList.sort()
         newTag = " ".join(tSortedList)
         newTaglist.append(newTag)
-    print "New Tag List: ", newTaglist
-        #globalTagsList.append(newTag)
-    print "---------------------------------------------"
+    return newTaglist
+
 def tagCleaner():
     emptyTag = '$$NOTAG$$'
     base_directory = '/Users/sidverma/Desktop/'
     os.chdir(base_directory)
     #dirs = os.listdir(base_directory)
-    globalTagsList = []
+    df1 = pd.read_csv('Final0-1500.csv')
+    df2 = pd.read_csv('Final1500-3000.csv')
+    df1 = df1.append(df2, axis = 0)
+    for fn in ['Final0-1500.csv', 'Final1500-3000.csv']:
+        
+    df.to_csv('Final0-2999.csv')
+    return
+
+
+def getTagFreqDict():
+    base_directory = '/Users/sidverma/Desktop/'
+    os.chdir(base_directory)
+    globalTags = []
     for fn in ['Final0-1500.csv', 'Final1500-3000.csv']:
         df = pd.read_csv(fn)
         tagsCol = df['Tags']
@@ -66,14 +79,10 @@ def tagCleaner():
                 index += 1
                 continue
             newTag = GetNewTag(i)
-            print
-            print 
-            print
-            print
-            print
             df.set_value(index, 'Tags', newTag)
             index += 1
     return collections.Counter(globalTagsList)
+
 
 # def fooo(inTopTags):
 #     count = 0
@@ -132,7 +141,7 @@ def Retagger():
     pop_tags = []
     for tup in lists:
         i += 1
-        if tup[1] < 5000:
+        if i == 1000:# if tup[1] < 1000:
             break
     lists = lists[:i]
     f = open('poptags', 'w')
