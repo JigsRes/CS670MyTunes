@@ -55,7 +55,7 @@ class myThread(threading.Thread):
 
   def tagCleaner(self,start_time,end_time):
     emptyTag = '$$NOTAG$$'
-    base_directory = '/Users/sidverma/Desktop/'
+    base_directory = '/Users/sidverma/Desktop/IR/'
     os.chdir(base_directory)
     #merge two files
     df = pd.read_csv('FinalTagroomFile.csv')
@@ -180,6 +180,7 @@ class myThread(threading.Thread):
     os.chdir(base_directory)
     tags_list=[]
     df = pd.read_csv('FinalTagroomMerged.csv')
+    final = pd.read_csv('Final.csv')
     tags_list = df['Tags']
     tags_list_New = []
     index = 0
@@ -200,7 +201,8 @@ class myThread(threading.Thread):
             print "Error"
 
     print "OK. Writing now...."
-    my_df = pd.DataFrame()     
+    my_df = pd.DataFrame()
+    my_df['Songs'] = final.Songs    
     my_df['Tags'] = tags_list_New
     # dfNew = pd.DataFrame(
     #        data={"Tags": pd.Series(tags_list_New),
