@@ -12,12 +12,12 @@ user_list = []
 neighbours_list = []
 scores_list = [] 
 
-base_directory = '/Users/sidverma/Desktop/IR/'
+base_directory = 'Project_folder/'
 os.chdir(base_directory)
 
 DataSetFile = "Final.csv"   #Need to check the name of the file
 DataSetSongFile = "FinalTagroomMergedVecs.csv"    # Need to check the name of this file
-DataSetTagDictFile = "/Users/sidverma/Documents/GitHub/CS670MyTunes/Helper files/DatasetCrawler/FinalTagFreq.csv"
+DataSetTagDictFile = "FinalTagFreq.csv"
 
 
 # reading the main File
@@ -27,6 +27,7 @@ frame.drop(["Playtime", "Album", "Match" , "Listeners", "Playcount", "Duration",
 # reading the tags related file:
 ## Songs Based Scoring
 frameSong = pd.read_csv(DataSetSongFile)
+frameSong["Songs"] = frame["Songs"]
 groupedSongs = frameSong.groupby(by="Songs")
 groupsSongs = groupedSongs.groups
 full_len = frameSong.shape[0]
@@ -72,7 +73,6 @@ def Calculate_content_based_score(username):
     Train_list = Full_list[0:int(math.ceil(split_ratio*len(Full_list)))]
     #print Train_list
     for tracks in Train_list:
-        print "Printing the length of the tags"
         tags_len = len(groupedSongs.get_group(tracks).Tags)
         tags_list = groupedSongs.get_group(tracks).Tags.tolist()
         historyListString =  str(tags_list[0]).split("$")
@@ -83,6 +83,7 @@ def Calculate_content_based_score(username):
     TF_listvec = [sum(x) for x in zip(*historyList)]
     print TF_listvec
     print len(TF_listvec)
+    print "Printing the end of the list"
     TF_IDF_listvec = TF_IDF_generator(TF_listvec)
     UserList_normalized = normalizefunction(TF_IDF_listvec)
     ScoringDict = collections.defaultdict(list)
@@ -90,6 +91,7 @@ def Calculate_content_based_score(username):
         print allusers
         if allusers == username:
             continue
+        print "Printing the tracks for this user"
         for tracks in groupedUsers.get_group(allusers).Songs.tolist():
              if tracks in ScoringDict:
                  continue
@@ -97,11 +99,13 @@ def Calculate_content_based_score(username):
              #tags_len = len(groupedSongs.get_group(tracks).Tags)
              tags_list = groupedSongs.get_group(tracks).Tags.tolist()
              songlistString =  str(tags_list[0]).split("$")
+             print "Printing the length of the string"
              for itr in songlistString:
                   songtempvec.append(int(itr))
              TF_IDF_songvec = TF_IDF_generator(songtempvec)
              song_normalized = normalizefunction(TF_IDF_songvec)
-             ScoringDict[tracks]= cosinefunction(UserList_normalized, song_normalized)
+             scoring_val = cosinefunction(UserList_normalized, song_normalized)
+             ScoringDict[tracks]= scoring_val
     print "I have reached here"
 
     reversesorteditems = sorted(ScoringDict.items(), key=operator.itemgetter(1), reverse=True)
@@ -109,26 +113,29 @@ def Calculate_content_based_score(username):
     similar_neighbors=[]
     similarity_scores=[]
     for  items in reversesorteditems:
-        if count == 300:
+        if count == 1000:
            break
-        similar_neighbors.append(str(items[0]))
+        #similar_neighbors.append(str(items[0]))
         similarity_scores.append(str(items[1]))                       
-        count = count + 1      
+        count = count + 1
+    return similarity_scores
     return similar_neighbors, similarity_scores
 
 def calculate_for_all():
     for allusers in groupsUsers.keys()[:10]:
+        print "Printing the length of the users"
         print allusers
+        print "Ending the users"
         user_list.append(allusers)
-        [neb_list,score_list] =  Calculate_content_based_score(allusers)                    
-        neighbours_list.append(neb_list)
+        score_list = Calculate_content_based_score(allusers)
+        #[neb_list,score_list] =  Calculate_content_based_score(allusers)
+        #neighbours_list.append(neb_list)
         scores_list.append(score_list)
 
 calculate_for_all()
 
 df = pd.DataFrame(
-    data={"Users": user_list, "Neigbours": neighbours_list, "Similarities": scores_list },
-    columns=["Users", "Neighbours", "Similarities"])
+    #data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list },
+    data={"Users": user_list,"Similarities": scores_list },
+    columns=["Users", "Similarities"])
 df.to_csv("ContentBasedSimilarity.csv", sep=',')
-
-    
