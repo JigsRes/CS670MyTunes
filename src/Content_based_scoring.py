@@ -13,7 +13,7 @@ user_list = []
 neighbours_list = []
 scores_list = [] 
 
-base_directory = 'Project_folder/'
+base_directory = '/Users/sidverma/Desktop/IR/SCORE'
 os.chdir(base_directory)
 
 DataSetFile = "Final.csv"   #Need to check the name of the file
@@ -143,7 +143,7 @@ def calculate_for_all():
     #data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list },
         data={"Users": user_list,"Neighbours": neighbours_list, "Similarities": scores_list },
           columns=["Users","Neighbours" "Similarities"])
-        df.to_csv("ContentBasedSimilarity" + str(allusers)+".csv", sep=',')
+        df.to_csv(str(allusers)+"CONTENT_SIM.csv", sep=',')
 calculate_for_all()
 
 

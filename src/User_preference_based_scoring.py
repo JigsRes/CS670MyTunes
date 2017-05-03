@@ -13,7 +13,7 @@ user_list = []
 neighbours_list = []
 scores_list = [] 
 Preference_factor = 0.4
-base_directory = 'Project_folder/'
+base_directory = '/Users/sidverma/Desktop/IR/SCORE'
 os.chdir(base_directory)
 
 DataSetFile = "Final.csv"   #Need to check the name of the file
@@ -157,5 +157,5 @@ def calculate_for_all():
     #data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list },
         data={"Users": user_list,"Neighbours": neighbours_list, "Similarities": scores_list },
           columns=["Users","Neighbours" "Similarities"])
-        df.to_csv("UserPreferenceBased" + str(allusers)+".csv", sep=',')
+        df.to_csv(str(allusers)+"USER_PREF.csv", sep=',')
 calculate_for_all()

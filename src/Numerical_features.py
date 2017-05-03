@@ -8,7 +8,7 @@ import math
 
 split_ratio_train_test = 0.8
 split_ratio_train = 0.2
-base_directory = 'Project_folder/'
+base_directory = '/Users/sidverma/Desktop/IR/SCORE'
 os.chdir(base_directory)
 DataSetFile = "Final.csv"
 frame = pd.read_csv(DataSetFile)
@@ -80,7 +80,7 @@ def numerical_feature_based_score(userlist):
     print scores_list
     df = pd.DataFrame(data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list }, 
              columns=["Users", "Neighbours", "Similarities"])  
-    df.to_csv("ContentBasedSimilarity_numerical_"+ str(username) + ".csv", sep=',')
+    df.to_csv(str(username) + "NUMERICAL_FEATURES.csv", sep=',')
 userlist = ['monkeyhacker','badboy495','sonnycorleones','heavydirtysoul_','Garry_Drezden']
 
 numerical_feature_based_score(userlist)
