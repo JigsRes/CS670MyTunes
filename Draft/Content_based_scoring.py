@@ -13,7 +13,7 @@ user_list = []
 neighbours_list = []
 scores_list = [] 
 
-base_directory = 'Project_folder/'
+base_directory = '/Users/sidverma/Desktop/IR/'
 os.chdir(base_directory)
 
 DataSetFile = "Final.csv"   #Need to check the name of the file
@@ -63,8 +63,6 @@ def TF_IDF_generator(input):
         return_list.append(val)
     return return_list
 
-
-
 # calculating the user content based on the history
 def Calculate_content_based_score(username):
     historyList = []
@@ -72,7 +70,7 @@ def Calculate_content_based_score(username):
     #print user_group.Songs
     Full_list = user_group.Songs.tolist()
     content_start_index = len(Full_list)- int(math.ceil(split_ratio_train_test*len(Full_list)))
-    content_end_index  = content_start_index + (split_ratio_train)* int(math.ceil(split_ratio_test_train*len(Full_list)))
+    content_end_index  = content_start_index + int((split_ratio_train)* (math.ceil(split_ratio_train_test*len(Full_list))))
     Train_list = Full_list[content_start_index:content_end_index]
     #print Train_list
     for tracks in Train_list:
@@ -135,7 +133,7 @@ def calculate_for_all():
 calculate_for_all()
 
 df = pd.DataFrame(
-    #data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list },
-    data={"Users": user_list,"Similarities": scores_list },
-    columns=["Users", "Similarities"])
+    data={"Users": user_list, "Neighbours": neighbours_list, "Similarities": scores_list },
+    #data={"Users": user_list,"Similarities": scores_list },
+    columns=["Users", "Neighbours", "Similarities"])
 df.to_csv("ContentBasedSimilarity.csv", sep=',')

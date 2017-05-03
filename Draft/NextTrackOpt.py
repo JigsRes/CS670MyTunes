@@ -33,14 +33,18 @@ User_df = pd.read_csv()
 Ranked_song_df = pd.read_csv()
 Similarity_dict = collections.OrderedDict()
 IntraSimScore_dict = collections.OrderedDict()
-#Getting average tag vector from root user
+# Getting average tag vector from root user
 user_avg_tag_veg = ComputePlaylistTagAvg(User_df)
 
+# Code for Intra-Ranked Song Similarity
 for i1, r1 in Ranked_song_df.iterrows():
 	for i2, r2 in Ranked_song_df.iterrows():
 		if set(i1, i2) in Similarity_dict.keys() or i1 == i2:
 			continue
 		Similarity_dict[set(i1, i2)] = ComputeSim(r1['Tags'], r2['Tags'])
+
+# Code for Similar to User Distribution
+
 
 for index in xrange(Ranked_song_df.shape[0]):
 	IntraSimScore_dict[index] = GetIntraSimScore(Ranked_song_df, index)

@@ -96,28 +96,10 @@ def knnSimilarity(inUserList):
         #t = sorted(similarityScores.items(), key=operator.itemgetter(1), reverse=True)
         final_df = pd.DataFrame(similarityScores.items(), columns=['Songs', 'Score'])
         fname = u + 'KNN_Score.csv'
-<<<<<<< Updated upstream:src/knn_baseline.py
         print "Taking a dump " + fname
-        final_df.to_csv(fname)
-
-def getUsers():
-    f = open('Best_Users.txt', 'r')
-    users = []
-    for l in f:
-        users.append(l)
-    return users
-
-def __main__():
-    userList = getUsers()
-    knnSimilarity(userList)
-    print 'DONE'
-
-__main__()
-=======
         final_df.to_csv(fname)
         # for tu in t[:199]:
         #     print tu
 userList = ['Babs_05']
 knnSimilarity(userList)
 print 'DONE'
->>>>>>> Stashed changes:Helper files/DatasetCrawler/knn Baseline.py
