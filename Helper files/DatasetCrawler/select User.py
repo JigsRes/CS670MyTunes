@@ -6,10 +6,10 @@ import operator
 import matplotlib.pyplot as plt
 import random
 
-_PLAYLIST_SIZE_THRESHOLD = 200
-_TAGS_THRESHOLD = 1
-_GOOD_RATIO = 0.7
-base_directory = 'C:/Users/007ri/OneDrive/Documents/GitHub/CS670MyTunes/Helper files/DatasetCrawler'
+_PLAYLIST_SIZE_THRESHOLD = 150
+_TAGS_THRESHOLD = 25
+_GOOD_RATIO = 0.8
+base_directory = '/Users/sidverma/Desktop/IR/'
 def getUserDataPlot():
     os.chdir(base_directory)
     df = pd.read_csv('Final.csv')
@@ -42,10 +42,12 @@ def getUserDataPlot():
     return goodUsers
 
 def isGooodTagList(inTagsStr):
-    inStrList = inTagsStr.split('#')
-    intTagsList = [int(i) for i in inStrList]
-    summation = sum(intTagsList)
-    if summation<_TAGS_THRESHOLD:
+    inStrList = inTagsStr.split('$')
+    summ = 0
+    for i in inStrList:
+        if i == '1':
+            summ += 1
+    if summ<_TAGS_THRESHOLD:
         return False
     else:
         return True
@@ -76,20 +78,34 @@ def isUserGoodEnough(songsPool, goodSongsSet):
         return False
 
 def getTagetUsers():
+    print 'Getting GoodUser Pool'
     goodUsernames = getUserDataPlot()
+    print len(goodUsernames)
+    print 'Done Getting GoodUser Pool'
+    print 'Getting GoodSongs Pool'
     goodSongsSet = getGoodSongsPool()
+    print len(goodSongsSet)
+    print 'Done Getting GoodSongs Pool'
     retTagetUsers = []
     os.chdir(base_directory)
     df = pd.read_csv('Final.csv')
     groupFrame = df.groupby(by='Users')
+    print 'Getting AwesomeUser Pool'
     for user in goodUsernames:
         currFrame = groupFrame.get_group(user)
         songsPool = set(currFrame.Songs.tolist())
         if isUserGoodEnough(songsPool, goodSongsSet):
             retTagetUsers.append(user)
+    print 'Done Getting AwesomeUser Pool'
     return retTagetUsers
 
 tmp = getTagetUsers()
-print len(tmp),'\nDone '
+print tmp,'\nDone '
+
+file = open('Best_Users.txt', 'w')
+for user in tmp:
+    file.write(user + '\n')
+file.close()
+print "Wrote to file..."
 
 
