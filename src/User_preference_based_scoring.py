@@ -148,7 +148,7 @@ def calculate_for_all():
         print allusers
         print "Ending the users"
         #score_list = Calculate_content_based_score(allusers)
-        neb_list,score_list =  Calculate_content_based_score(allusers)
+        neb_list,score_list =  User_preference_based_score(allusers)
         neighbours_list = []
         scores_list = []
         neighbours_list.append(neb_list)
