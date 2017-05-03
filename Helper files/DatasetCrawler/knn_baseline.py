@@ -98,8 +98,17 @@ def knnSimilarity(inUserList):
         fname = u + 'KNN_Score.csv'
         print "Taking a dump " + fname
         final_df.to_csv(fname)
-        # for tu in t[:199]:
-        #     print tu
-userList = ['Babs_05']
-knnSimilarity(userList)
-print 'DONE'
+
+def getUsers():
+    f = open('Best_Users.txt', 'r')
+    users = []
+    for l in f:
+        users.append(l)
+    return users
+
+def __main__():
+    userList = getUsers()
+    knnSimilarity(userList)
+    print 'DONE'
+
+__main__()
