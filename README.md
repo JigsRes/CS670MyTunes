@@ -18,6 +18,3 @@ Dataset Files - https://drive.google.com/open?id=0By5IpBdZIzdZWUVqYzZtam5DcGs
 
 ## Video Presentation
 Video Presentation - 
-
-## GitHub Repository
-GitHub Repository - https://github.com/riydev/CS670MyTunes
